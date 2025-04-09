@@ -1,10 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const directoryPath = path.join(__dirname, './locales/');
-const currentLocales: string[] = [];
+// Get the path to the frontend locales directory
+let frontendLocalesPath: string;
+const isDev = process.env.ELECTRON_DEV || false;
 
-fs.readdirSync(directoryPath).forEach(file => currentLocales.push(file));
+if (isDev) {
+  frontendLocalesPath = path.resolve(__dirname, '../../frontend/src/i18n/locales');
+} else {
+  frontendLocalesPath = path.join(process.resourcesPath, 'frontend/i18n/locales');
+}
+
+// Read available locales from the frontend locales directory
+const currentLocales: string[] = [];
+if (fs.existsSync(frontendLocalesPath)) {
+  fs.readdirSync(frontendLocalesPath).forEach(file => currentLocales.push(file));
+}
 
 export { currentLocales as CURRENT_LOCALES };
-export { directoryPath as LOCALES_DIR };
+export { frontendLocalesPath as LOCALES_DIR };
